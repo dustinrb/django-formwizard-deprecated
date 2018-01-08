@@ -5,7 +5,7 @@ stored on the server side.
 """
 from django.forms import HiddenInput
 from django.http import Http404
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.template.context import RequestContext
 from django.utils.crypto import constant_time_compare
 from django.utils.translation import ugettext_lazy as _
@@ -236,14 +236,17 @@ class FormWizard(object):
         """
         context = context or {}
         context.update(self.extra_context)
-        return render_to_response(self.get_template(step), dict(context,
-            step_field=self.step_field_name,
-            step0=step,
-            step=step + 1,
-            step_count=self.num_steps(),
-            form=form,
-            previous_fields=previous_fields
-        ), context_instance=RequestContext(request))
+        return render(
+            request,
+            self.get_template(step),
+            dict(context,
+                step_field=self.step_field_name,
+                step0=step,
+                step=step + 1,
+                step_count=self.num_steps(),
+                form=form,
+                previous_fields=previous_fields
+            ))
 
     def process_step(self, request, form, step):
         """
